@@ -538,7 +538,7 @@ async function startApp(){
 }
 
 startApp();
-//===== RELATIONSHIPS =====
+//=====11 RELATIONSHIP DATABASE=====
 
 function createRelationship(from_type,from_id,relation,to_type,to_id){
     return new Promise((resolve,reject)=>{
@@ -616,6 +616,43 @@ function getAllRelationships(){
 
         request.onsuccess=()=>resolve(request.result);
         request.onerror=()=>reject(request.error);
+    });
+}
+
+async function cleanDuplicateRelationships(){
+    const relationships=await getAllRelationships();
+    const seen=new Set();
+    const duplicates=[];
+
+    for(const r of relationships){
+        const key=[
+            r.from_type,
+            r.from_id,
+            r.relation,
+            r.to_type,
+            r.to_id
+        ].join("|");
+
+        if(seen.has(key)){
+            duplicates.push(r.id);
+        }else{
+            seen.add(key);
+        }
+    }
+
+    if(!duplicates.length)return;
+
+    const tx=db.transaction("relationships","readwrite");
+    const store=tx.objectStore("relationships");
+
+    duplicates.forEach(id=>{
+        store.delete(id);
+    });
+
+    await new Promise((resolve,reject)=>{
+        tx.oncomplete=resolve;
+        tx.onerror=()=>reject(tx.error);
+        tx.onabort=()=>reject(tx.error);
     });
 }
 //=====12 CONCEPT DATABASE=====
@@ -1165,7 +1202,16 @@ async function openKnowledge(type,id){
         <button id="backRecall">Back</button>
     `;
 
-    $("backRecall").onclick=initRecallUI;
+    $("backRecall").onclick=()=>{
+        section.innerHTML=`
+            <h2>Recall</h2>
+            <input id="recallInput" placeholder="Apa yang sedang kamu cari?">
+            <button id="recallButton">Recall</button>
+            <div id="recallList"></div>
+        `;
+
+        $("recallButton").onclick=runRecall;
+    };
 
     await renderRelationships(type,id);
 }
@@ -1266,9 +1312,10 @@ async function renderRelationships(type,id){
 
         return`
             <li>
-                ${esc(r.relation)}
-                → ${esc(target.name)}
-                (${esc(target.type)})
+                ${isFrom
+                    ? `${esc(r.relation)} → ${esc(target.name)} (${esc(target.type)})`
+                    : `← ${esc(r.relation)} — ${esc(target.name)} (${esc(target.type)})`
+                }
             </li>
         `;
     }).filter(Boolean).join("");
