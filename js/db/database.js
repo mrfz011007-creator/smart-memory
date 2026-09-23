@@ -1,7 +1,7 @@
 //===== DATABASE.JS =====
 
 const DB_NAME="aiProjectHub";
-const DB_VERSION=4;
+const DB_VERSION=5;
 
 function openDatabase(){
     return new Promise((resolve,reject)=>{
@@ -31,12 +31,68 @@ function openDatabase(){
             });
 
             if(!db.objectStoreNames.contains("captures")){
-                const store=db.createObjectStore("captures",{keyPath:"id"});
-                store.createIndex("created_at","created_at");
+                const store=db.createObjectStore(
+                    "captures",
+                    {keyPath:"id"}
+                );
+
+                store.createIndex(
+                    "created_at",
+                    "created_at"
+                );
+            }
+
+            if(!db.objectStoreNames.contains("knowledge")){
+                const store=db.createObjectStore(
+                    "knowledge",
+                    {keyPath:"id"}
+                );
+
+                store.createIndex("type","type");
+                store.createIndex("status","status");
+                store.createIndex(
+                    "epistemic_status",
+                    "epistemic_status"
+                );
+                store.createIndex(
+                    "created_at",
+                    "created_at"
+                );
+                store.createIndex(
+                    "updated_at",
+                    "updated_at"
+                );
+            }
+
+            if(!db.objectStoreNames.contains("candidates")){
+                const store=db.createObjectStore(
+                    "candidates",
+                    {keyPath:"id"}
+                );
+
+                store.createIndex(
+                    "status",
+                    "status"
+                );
+                store.createIndex(
+                    "source_capture_id",
+                    "source_capture_id"
+                );
+                store.createIndex(
+                    "created_at",
+                    "created_at"
+                );
+                store.createIndex(
+                    "updated_at",
+                    "updated_at"
+                );
             }
 
             if(!db.objectStoreNames.contains("relationships")){
-                const store=db.createObjectStore("relationships",{keyPath:"id"});
+                const store=db.createObjectStore(
+                    "relationships",
+                    {keyPath:"id"}
+                );
 
                 store.createIndex(
                     "from",
@@ -57,7 +113,6 @@ function openDatabase(){
                     "created_at",
                     "created_at"
                 );
-
             }else{
                 const store=tx.objectStore("relationships");
 

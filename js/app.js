@@ -1,6 +1,7 @@
 //=====01 CORE=====
 
 let db;
+
 const $=id=>document.getElementById(id);
 const uid=()=>crypto.randomUUID();
 const now=()=>new Date().toISOString();
@@ -10,6 +11,48 @@ const esc=s=>{
     d.textContent=s??"";
     return d.innerHTML;
 };
+
+async function exportDatabase(){
+    if(!db){
+        status.textContent="Database belum siap.";
+        return;
+    }
+
+    const stores=[
+        ...db.objectStoreNames
+    ];
+
+    const backup={
+        database:"aiProjectHub",
+        version:db.version,
+        exported_at:now(),
+        stores:{}
+    };
+
+    for(const storeName of stores){
+        backup.stores[storeName]=
+            await getAllRecords(storeName);
+    }
+
+    const blob=new Blob(
+        [JSON.stringify(backup,null,2)],
+        {type:"application/json"}
+    );
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+
+    a.href=url;
+    a.download=
+        `ai-project-hub-backup-${Date.now()}.json`;
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+    status.textContent=
+        `Backup berhasil dibuat: ${stores.length} stores.`;
+}
 //=====02 DATABASE CRUD=====
 
 function addRecord(store,data){
@@ -508,11 +551,33 @@ async function loadAll(){
     await loadProjects();
 }
 
+function showInitStatus(message){
+    const el=$("status");
+
+    if(el){
+        el.textContent=message;
+    }
+}
+
 async function startApp(){
     try{
+        showInitStatus("INIT 1/8 — Membuka database...");
+
         db=await openDatabase();
 
+        showInitStatus(
+            `INIT 2/8 — Database berhasil dibuka. V${db.version}`
+        );
+
+        showInitStatus(
+            "INIT 3/8 — Memeriksa relationships..."
+        );
+
         await cleanDuplicateRelationships();
+
+        showInitStatus(
+            "INIT 4/8 — Memasang event..."
+        );
 
         $("saveCapture").onclick=saveCapture;
         $("createProject").onclick=createProject;
@@ -520,20 +585,39 @@ async function startApp(){
         $("saveExperience").onclick=saveExperience;
         $("saveLesson").onclick=saveLesson;
 
+        showInitStatus(
+            "INIT 5/8 — Memuat Knowledge UI..."
+        );
+
         initKnowledgeUI();
         initToolUI();
         initWorkflowUI();
         initRecallUI();
 
+        showInitStatus(
+            "INIT 6/8 — Memuat data utama..."
+        );
+
         await loadAll();
+
+        showInitStatus(
+            "INIT 7/8 — Memuat knowledge..."
+        );
+
         await loadConcepts();
         await loadTools();
         await loadWorkflows();
 
-        status.textContent="AI Project Hub siap.";
+        showInitStatus(
+            "INIT 8/8 — AI Project Hub siap."
+        );
+
     }catch(error){
         console.error(error);
-        status.textContent="Gagal membuka database.";
+
+        showInitStatus(
+            `ERROR — ${error.name}: ${error.message}`
+        );
     }
 }
 
