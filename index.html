@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Project Hub</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<main>
+
+    <header>
+        <h1>AI Project Hub</h1>
+        <p id="status">Loading...</p>
+    </header>
+
+    <!-- CAPTURE -->
+
+    <section>
+        <h2>Capture</h2>
+
+        <textarea
+            id="captureInput"
+            rows="5"
+            placeholder="Tulis ide, masalah, pertanyaan, pengalaman, atau apa pun..."
+        ></textarea>
+
+        <button id="saveCapture">Save</button>
+
+        <div id="captureList"></div>
+    </section>
+
+
+    <!-- ENTITIES -->
+
+    <section>
+        <h2>Entities</h2>
+
+        <div class="entity-columns">
+
+            <div>
+                <h3>Ideas</h3>
+                <div id="ideaList"></div>
+            </div>
+
+            <div>
+                <h3>Problems</h3>
+                <div id="problemList"></div>
+            </div>
+
+            <div>
+                <h3>Questions</h3>
+                <div id="questionList"></div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- PROJECTS -->
+
+    <section>
+        <h2>Projects</h2>
+
+        <input
+            id="projectTitle"
+            placeholder="Nama project"
+        >
+
+        <textarea
+            id="projectGoal"
+            rows="3"
+            placeholder="Tujuan project"
+        ></textarea>
+
+        <button id="createProject">
+            Create Project
+        </button>
+
+        <div id="projectList"></div>
+    </section>
+
+
+    <!-- PROJECT WORKSPACE -->
+
+    <section>
+
+        <h2>Project Workspace</h2>
+
+        <select id="projectSelect">
+            <option value="">Pilih project</option>
+        </select>
+
+        <div id="projectWorkspace">
+            <p>Pilih project untuk melihat workspace.</p>
+        </div>
+
+    </section>
+
+
+    <!-- EXPERIMENT -->
+
+    <section>
+
+        <h2>New Experiment</h2>
+
+        <select id="experimentProject">
+            <option value="">Pilih project</option>
+        </select>
+
+        <textarea
+            id="experimentHypothesis"
+            rows="3"
+            placeholder="Hypothesis"
+        ></textarea>
+
+        <textarea
+            id="experimentMethod"
+            rows="3"
+            placeholder="Method / cara menguji"
+        ></textarea>
+
+        <textarea
+            id="experimentResult"
+            rows="3"
+            placeholder="Result"
+        ></textarea>
+
+        <textarea
+            id="experimentConclusion"
+            rows="3"
+            placeholder="Conclusion"
+        ></textarea>
+
+        <button id="saveExperiment">
+            Save Experiment
+        </button>
+
+    </section>
+
+
+    <!-- EXPERIENCE -->
+
+    <section>
+
+        <h2>New Experience</h2>
+
+        <select id="experienceProject">
+            <option value="">Pilih project</option>
+        </select>
+
+        <textarea
+            id="experienceDescription"
+            rows="4"
+            placeholder="Apa yang benar-benar terjadi?"
+        ></textarea>
+
+        <button id="saveExperience">
+            Save Experience
+        </button>
+
+    </section>
+
+
+    <!-- LESSON -->
+
+    <section>
+
+        <h2>New Lesson</h2>
+
+        <input
+            id="lessonTitle"
+            placeholder="Judul lesson"
+        >
+
+        <textarea
+            id="lessonDescription"
+            rows="4"
+            placeholder="Apa yang dipelajari?"
+        ></textarea>
+
+        <select id="lessonProject">
+            <option value="">Pilih project</option>
+        </select>
+
+        <button id="saveLesson">
+            Save Lesson
+        </button>
+
+    </section>
+
+</main>
+
+<script src="js/db/database.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
